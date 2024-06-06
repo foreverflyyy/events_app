@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+    rpc GetUserById (UsersIdDto) returns (UserResponse) {}
+    rpc ChangeEventsField (UsersPeopleDto) returns (UserResponse) {}
+    rpc ChangeOwnEventsField (UsersPeopleDto) returns (UserResponse) {}
+}
+
+message UsersIdDto {
+    string id = 1;
+}
+
+enum UserActionType {
+    ADD = 0;
+    DELETE = 1;
+}
+
+message UsersPeopleDto {
+    string id = 1;
+    UserActionType action = 2;
+    repeated string people = 3;
+}
+
+message UserResponse {
+    MessageUserResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message UsersResponse {
+    MessageUsersResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message MessageUserResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        User data = 3;
+        string error = 4;
+    };
+}
+
+message MessageUsersResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        Users data = 3;
+        string error = 4;
+    };
+}
+
+message Users {
+    repeated User records = 1;
+}
+
+enum SexType {
+    MALE = 0;
+    FEMALE = 1;
+    UNKNOWN = 2;
+}
+
+enum RoleType {
+    USER = 0;
+    ADMIN = 1;
+    ORGANIZER = 2;
+}
+
+message User {
+    string id = 1;
+    string login = 2;
+    string email = 3;
+    string phone = 4;
+    string name = 5;
+    RoleType role = 6;
+    string mainImage = 7;
+    string city = 8;
+    SexType sex = 9;
+    string birthday = 10;
+    string description = 11;
+    repeated string tags = 12;
+    repeated string categories = 13;
+    repeated string achievements = 14;
+    repeated string favourites = 15;
+    repeated string events = 16;
+    repeated string ownEvents = 17;
+    bool active = 18;
+    string registerAt = 19;
+    string lastSeen = 20;
+}
+
+message Empty {}

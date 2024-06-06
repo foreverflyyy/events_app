@@ -1,0 +1,135 @@
+version: "3.8"
+
+services:
+    root:
+      build:
+        context: .
+        dockerfile: ./apps/root/Dockerfile
+        target: development
+      environment:
+        - PATH_TO_ENV=.prod.env
+      ports:
+        - "6060:6060"
+        - "5000:5000"
+      networks:
+        - rpc
+
+    cms:
+      build:
+        context: .
+        dockerfile: ./apps/cms/Dockerfile
+        target: development
+      environment:
+        - PATH_TO_ENV=.prod.env
+      depends_on:
+        - postgres-cms
+      ports:
+        - "6061:6061"
+        - "5001:5001"
+      networks:
+        - rpc
+
+    files:
+      build:
+        context: .
+        dockerfile: ./apps/files/Dockerfile
+        target: development
+      container_name: files
+      environment:
+        - PATH_TO_ENV=.prod.env
+      ports:
+        - "5002:5002"
+      networks:
+        - rpc
+
+    auth:
+      build:
+        context: .
+        dockerfile: ./apps/auth/Dockerfile
+        target: development
+      container_name: auth
+      environment:
+        - PATH_TO_ENV=.prod.env
+      ports:
+        - "5003:5003"
+      networks:
+        - rpc
+
+    events:
+      build:
+        context: .
+        dockerfile: ./apps/events/Dockerfile
+        target: development
+      container_name: events
+      environment:
+        - PATH_TO_ENV=.prod.env
+      ports:
+        - "5005:5005"
+      networks:
+        - rpc
+
+    postgres-cms:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_DB: "events_cms"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "postgres"
+      volumes:
+        - ./pgdata:/var/lib/postgresql/data
+      ports:
+        - "5432:5432"
+      networks:
+        - rpc
+
+    pgadmin:
+      image: dpage/pgadmin4
+      restart: always
+      environment:
+        - PGADMIN_DEFAULT_EMAIL=root@root.com
+        - PGADMIN_DEFAULT_PASSWORD=root
+      ports:
+        - "5050:80"
+      depends_on:
+        - postgres-cms
+      networks:
+        - rpc
+
+    rabbitmq:
+      build:
+        context: rabbit_config
+        dockerfile: ./Dockerfile
+      container_name: rabbitmq
+      hostname: rabbitmq
+      restart: always
+      environment:
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=admin
+        # Перестанет писать в стейт, если осталось меньше 2гб памяти
+        # Добавление уровня логирования error
+        - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+      volumes:
+        - ./rabbit_data:/var/lib/rabbitmq
+      ports:
+        - "15672:15672"
+        - "5672:5672"
+
+#  redis:
+#    container_name: redis
+#    image: "redis:alpine"
+#    restart: always
+#    environment:
+#      - REDIS_PASSWORD=root
+#    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - ./redis_data:/data
+
+# author: 66130f25a7a7c04de296db5d   address 6645edf363bf058a77b1515a
+
+networks:
+  rpc:
+    driver: bridge
+  elk:
+    driver: bridge

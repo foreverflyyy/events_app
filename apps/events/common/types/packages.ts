@@ -1,0 +1,3 @@
+export const AUTH_SERVICE = "AUTH_PACKAGE";
+export const FILE_SERVICE = "FILE_PACKAGE";
+export const REQUEST_SERVICE = "REQUEST_PACKAGE";

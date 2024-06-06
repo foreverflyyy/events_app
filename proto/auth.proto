@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthRootService {
+    rpc AddUser (ShortUserData) returns (Response) {};
+    rpc DeleteUser (ShortUserData) returns (Response) {};
+    rpc CheckTokenAndGetUser (TokensData) returns (Response) {}
+    rpc SignIn (SignInDto) returns (Response) {}
+    rpc Logout (AccessDto) returns (Response) {}
+    rpc Refresh (RefreshDto) returns (Response) {}
+}
+
+service AuthCmsService {
+    rpc AddUser (UserForCreate) returns (Response) {};
+    rpc DeleteUser (DeleteUserDto) returns (Response) {};
+    rpc CheckTokenAndGetUser (TokensData) returns (UserResponse) {}
+    rpc SignIn (SignInDto) returns (Response) {}
+    rpc Logout (AccessDto) returns (Response) {}
+    rpc Refresh (RefreshDto) returns (Response) {}
+}
+
+message TokensData {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message MessageResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        TokensData data = 3;
+        string error = 4;
+    };
+}
+
+message Response {
+    MessageResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message UserResponse {
+    MessageUserResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message MessageUserResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        ShortUserData data = 3;
+        string error = 4;
+    };
+}
+
+message SignInDto {
+    string login = 1;
+    string password = 2;
+}
+
+message AccessDto {
+    string accessToken = 1;
+}
+
+message RefreshDto {
+    string refreshToken = 1;
+}
+
+message FullUserData {
+    string id = 1;
+    string userId = 2;
+    string name = 3;
+    string login = 4;
+    string role = 5;
+    string mainImage = 6;
+}
+
+message ShortUserData {
+    string userId = 2;
+    string name = 3;
+    string login = 4;
+    string role = 5;
+}
+
+message UserForCreate {
+    string userId = 1;
+    string password = 2;
+    string name = 3;
+    string login = 4;
+    string role = 5;
+}
+
+message DeleteUserDto {
+    string userId = 1;
+    string login = 2;
+}
+
+message Empty {}

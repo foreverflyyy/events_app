@@ -1,0 +1,241 @@
+syntax = "proto3";
+
+package event;
+
+service EventService {
+    rpc GetEvents (Empty) returns (EventsResponse) {}
+    rpc GetEventById (EventIdDto) returns (EventResponse) {}
+    rpc GetEventsByAuthor (EventAuthorDto) returns (EventsResponse) {}
+    rpc UpdateEvent (UpdateEventDto) returns (EventResponse) {}
+    rpc DeleteEvent (EventIdDto) returns (EventResponse) {}
+    rpc ChangeMarkedField (EventPeopleDto) returns (EventResponse) {}
+    rpc ChangeParticipantsField (EventPeopleDto) returns (EventResponse) {}
+    rpc ChangeOrganizersField (EventPeopleDto) returns (EventResponse) {}
+}
+
+message EventIdDto {
+    string id = 1;
+}
+
+message EventAuthorDto {
+    string author = 1;
+}
+
+message UpdateEventDto {
+    string id = 1;
+    UpdateEvent data = 2;
+}
+
+enum EventActionType {
+    ADD = 0;
+    DELETE = 1;
+}
+
+message EventPeopleDto {
+    string id = 1;
+    EventActionType action = 2;
+    repeated string people = 3;
+}
+
+message EventResponse {
+    MessageEventResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message EventsResponse {
+    MessageEventsResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message MessageEventResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        Event data = 3;
+        string error = 4;
+    };
+}
+
+message MessageEventsResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        Events data = 3;
+        string error = 4;
+    };
+}
+
+message Events {
+    repeated Event records = 1;
+}
+
+message Event {
+    string id = 1;
+    string author = 7;
+    string name = 8;
+    string description = 9;
+    repeated EventDate date = 10;
+    string city = 11;
+    string place = 12;
+    string address = 13;
+    string mainImage = 14;
+    repeated string images = 15;
+    string ageLimit = 16;
+    int32 price = 17;
+    string currency = 18;
+    repeated string tags = 19;
+    repeated string categories = 20;
+    repeated string organizers = 21;
+    string participants = 22;
+    string status = 23;
+    string news = 24;
+}
+
+message UpdateEvent {
+    string author = 7;
+    string name = 8;
+    string description = 9;
+    repeated EventDate date = 10;
+    string city = 11;
+    string place = 12;
+    string address = 13;
+    string ageLimit = 16;
+    int32 price = 17;
+    string currency = 18;
+    repeated string tags = 19;
+    repeated string categories = 20;
+    string status = 23;
+    string news = 24;
+}
+
+service EventRequestService {
+    rpc GetEventRequests (Empty) returns (EventRequestsResponse) {}
+    rpc GetEventRequestsByAuthor (GetEventRequestsByAuthorDto) returns (EventRequestsResponse) {}
+    rpc GetEventRequestById (EventRequestIdDto) returns (EventRequestResponse) {}
+    rpc SendEventRequest (CreateEventRequestDto) returns (EventRequestResponse) {}
+    rpc UpdateEventRequest (UpdateEventRequestDto) returns (EventRequestResponse) {}
+    rpc ConfirmEventRequestsByUser (EventRequestIdDto) returns (EventRequestsResponse) {}
+    rpc RejectRequestsByUser (EventRequestIdDto) returns (EventRequestsResponse) {}
+}
+
+message Empty {}
+
+message EventRequestResponse {
+    MessageEventRequestResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message EventRequestsResponse {
+    MessageEventRequestsResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message MessageEventRequestResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        EventRequest data = 3;
+        string error = 4;
+    };
+}
+
+message MessageEventRequestsResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        EventRequests data = 3;
+        string error = 4;
+    };
+}
+
+message EventRequests {
+    repeated EventRequest records = 3;
+}
+
+message GetEventRequestsByAuthorDto {
+    string author = 1;
+}
+
+message File {
+    string fieldname = 1;
+    string originalname = 2;
+    string encoding = 3;
+    string mimetype = 4;
+    bytes buffer = 5;
+    int64 size = 6;
+}
+
+message CreateEventRequestDto {
+    string eventId = 6;
+    string author = 7;
+    string name = 8;
+    string description = 9;
+    repeated EventDate date = 10;
+    string city = 11;
+    string place = 12;
+    string address = 13;
+    File mainImage = 14;
+    repeated File images = 15;
+    string ageLimit = 16;
+    int32 price = 17;
+    string currency = 18;
+    repeated string tags = 19;
+    repeated string categories = 20;
+    repeated string organizers = 21;
+    string status = 22;
+}
+
+message UpdateEventRequestDto {
+    string id = 1;
+    string eventId = 6;
+    string author = 7;
+    string name = 8;
+    string description = 9;
+    repeated EventDate date = 10;
+    string city = 11;
+    string place = 12;
+    string address = 13;
+    File mainImage = 14;
+    repeated File images = 15;
+    string ageLimit = 16;
+    int32 price = 17;
+    string currency = 18;
+    repeated string tags = 19;
+    repeated string categories = 20;
+    repeated string organizers = 21;
+    string status = 22;
+}
+
+message EventRequest {
+    string id = 1;
+    string eventId = 6;
+    string author = 7;
+    string name = 8;
+    string description = 9;
+    repeated EventDate date = 10;
+    string city = 11;
+    string place = 12;
+    string address = 13;
+    string mainImage = 14;
+    repeated string images = 15;
+    string ageLimit = 16;
+    int32 price = 17;
+    string currency = 18;
+    repeated string tags = 19;
+    repeated string categories = 20;
+    repeated string organizers = 21;
+    string status = 22;
+}
+
+message EventRequestIdDto {
+    string id = 1;
+}
+
+message EventDate {
+    string dateStart = 1;
+    string dateEnd = 2;
+}

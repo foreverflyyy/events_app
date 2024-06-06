@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package file;
+
+service FileService {
+    rpc AddMainImage (AddMainImageDto) returns (FileResponse) {}
+    rpc DeleteMainImage (DeleteMainImageDto) returns (FileResponse) {}
+    rpc AddExtraImages (AddExtraImagesDto) returns (FilesResponse) {}
+    rpc DeleteExtraImages (DeleteExtraImagesDto) returns (FilesResponse) {}
+}
+
+message FileResponse {
+    MessageFileResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message FilesResponse {
+    MessageFilesResponse message = 1;
+    int32 statusCode = 2;
+    string error = 3;
+}
+
+message MessageFileResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        FileDataResponse data = 3;
+        string error = 4;
+    };
+}
+
+message MessageFilesResponse {
+    int32 code = 1;
+    oneof option {
+        string message = 2;
+        FilesDataResponse data = 3;
+        string error = 4;
+    };
+}
+
+message FileDataResponse {
+    ServerFileData image = 1;
+}
+
+message FilesDataResponse {
+    repeated ServerFileData images = 1;
+}
+
+message ServerFileData {
+    string pathToImage = 1;
+    string imageFullName = 2;
+    string fullPathToImage = 3;
+}
+
+message AddMainImageDto {
+    string id = 1;
+    string collection = 2;
+    File fileData = 3;
+}
+
+message DeleteMainImageDto {
+    string link = 1;
+}
+
+message AddExtraImagesDto {
+    string id = 1;
+    string collection = 2;
+    repeated File filesData = 3;
+}
+
+message DeleteExtraImagesDto {
+    repeated string links = 1;
+}
+
+message File {
+    string fieldname = 1;
+    string originalname = 2;
+    string encoding = 3;
+    string mimetype = 4;
+    bytes buffer = 5;
+    int64 size = 6;
+}
